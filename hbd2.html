@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🍓 Happy Birthday My Sweetest! 🍓</title>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700&family=Pacifico&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
+    <style>
+        :root {
+            --straw-red: #e63946;
+            --straw-pink: #ffadd7;
+            --straw-cream: #fffdf7;
+            --straw-green: #a8e6cf;
+            --glass-bg: rgba(255, 255, 255, 0.7);
+            --glass-border: rgba(255, 255, 255, 0.9);
+        }
+
+        body {
+            font-family: 'Nunito', sans-serif;
+            background-color: var(--straw-cream);
+            background-image: radial-gradient(var(--straw-pink) 2px, transparent 2px);
+            background-size: 30px 30px;
+            margin: 0;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+            color: #4a4a4a;
+        }
+
+        /* Background Floating Strawberries */
+        .bg-strawberries {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            pointer-events: none; z-index: -1;
+        }
+        .floating-item {
+            position: absolute;
+            font-size: 2rem;
+            animation: floatUp linear infinite;
+            opacity: 0.6;
+        }
+        @keyframes floatUp {
+            to { transform: translateY(-100vh) rotate(360deg); }
+        }
+
+        /* Main Container - Glassmorphism Style */
+        .container {
+            background: var(--glass-bg);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border-radius: 20px;
+            border: 2px solid var(--glass-border);
+            padding: 30px;
+            width: 90%;
+            max-width: 500px;
+            text-align: center;
+            box-shadow: 0 8px 32px 0 rgba(230, 57, 70, 0.2);
+            transition: all 0.5s ease;
+        }
+
+        h1 {
+            font-family: 'Pacifico', cursive;
+            color: var(--straw-red);
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+
+        /* Buttons */
+        .btn-main {
+            background: var(--straw-red);
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 50px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+            box-shadow: 0 5px 15px rgba(230, 57, 70, 0.3);
+        }
+        .btn-main:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(230, 57, 70, 0.4);
+            background: #d32f2f;
+        }
+
+        /* Sections & Transitions */
+        .section { display: none; opacity: 0; transition: opacity 0.5s ease; }
+        .section.active { display: block; opacity: 1; }
+
+        /* Quiz Styling */
+        .quiz-option {
+            background: white;
+            margin: 10px 0;
+            padding: 15px;
+            border-radius: 10px;
+            cursor: pointer;
+            border: 2px solid transparent;
+            transition: all 0.3s;
+            font-weight: bold;
+        }
+        .quiz-option:hover {
+            border-color: var(--straw-pink);
+            background: var(--straw-cream);
+        }
+        .quiz-option.correct { background: var(--straw-green); color: #006400; }
+        .quiz-option.wrong { background: var(--straw-red); color: white; animation: shake 0.5s; }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-5px); }
+            75% { transform: translateX(5px); }
+        }
+
+        /* Gallery */
+        .gallery { display: flex; gap: 10px; justify-content: center; margin-top: 20px; flex-wrap: wrap;}
+        .photo-frame {
+            width: 100px; height: 100px;
+            border-radius: 10px;
+            border: 4px solid var(--straw-red);
+            background-size: cover; background-position: center;
+            transform: rotate(-3deg);
+            transition: transform 0.3s;
+        }
+        .photo-frame:nth-child(even) { transform: rotate(3deg); }
+        .photo-frame:hover { transform: scale(1.1) rotate(0); z-index: 10;}
+
+    </style>
+</head>
+<body>
+    <audio id="bg-music" loop>
+        <source src="https://assets.mixkit.co/music/preview/mixkit-sweet-moments-and-happy-days-24.mp3" type="audio/mpeg">
+    </audio>
+
+    <div class="bg-strawberries" id="bg-strawberries"></div>
+
+    <div class="container">
+        
+        <div id="intro" class="section active">
+            <h1>HBD My Emeshh yang cuka stroberi! 🍓</h1>
+            <p>Ada misi spesial buat ade di hari ulang tahun ini.</p>
+            <p>Kumpulkan 3 strawberry cinta untuk membuka kado utamamu!</p>
+            <br>
+            <button class="btn-main" onclick="startJourney()">Mulai Misi! 🚀</button>
+        </div>
+
+        <div id="quiz-section" class="section">
+            <h2 id="quiz-question">Pertanyaan...</h2>
+            <div id="quiz-options">
+                </div>
+            <p style="margin-top: 20px; font-size: 0.9rem;">Strawberry terkumpul: <span id="score">0</span>/3 🍓</p>
+        </div>
+
+        <div id="finale" class="section">
+            <h1>Yey! Misi Berhasil! 🎉</h1>
+            <p>Kamu emang paling kenal aku deh.</p>
+            
+            <div class="gallery">
+                <div class="photo-frame" style="background-image: url('https://images.unsplash.com/photo-1604430278653-88639d6d5056?w=400');"></div>
+                <div class="photo-frame" style="background-image: url('https://images.unsplash.com/photo-1519671482749-fd09be7ccebf?w=400');"></div>
+                <div class="photo-frame" style="background-image: url('https://images.unsplash.com/photo-1523293836414-f03e9094631a?w=400');"></div>
+            </div>
+
+            <div style="margin-top: 30px; text-align: left; max-height: 200px; overflow-y: auto;">
+                <p id="typewriter-text" style="font-weight: 600; color: var(--straw-red);"></p>
+            </div>
+            <br>
+            <button class="btn-main" onclick="sendWA()">🍓 Peluk Online 🍓</button>
+        </div>
+
+    </div>
+
+    <script>
+        // --- CUSTOM BAGIAN INI ---
+
+        // 1. PESAN SURAT TERAKHIR
+        const finalMessage = "Dear Strawberry-ku yang paling manis. Selamat ulang tahun ya! Makasih udah jadi warna paling cerah di hidupku. Aku bikin game kecil ini biar kamu tau kalau aku inget semua hal kecil tentang kita. Semoga di umur yang baru ini kamu makin bahagia, makin cantik (padahal udah max), dan makin sayang sama aku. I love you berry berry much! ❤️";
+        
+        // 2. DATA KUIS (Ganti dengan fakta hubungan kalian!)
+        // Pastikan 'correct' adalah indeks jawaban yang benar (mulai dari 0, 1, 2, dst.)
+        const quizData = [
+            {
+                question: "Di mana pertama kali kita ketemu/jadian?",
+                options: ["Di Kampus", "Di Cafe Kopi Kenangan", "Di Chat WA", "Di Mimpi"],
+                correct: 1 // Artinya jawaban benar adalah "Di Cafe Kopi Kenangan"
+            },
+            {
+                question: "Apa makanan yang paling aku suka kalau lagi badmood?",
+                options: ["Seblak level 10", "Es Krim Strawberry", "Nasi Padang", "Liat foto kamu"],
+                correct: 3 // Artinya jawaban benar adalah "Liat foto kamu" (Gombal dikit gpp)
+            },
+            {
+                question: "Tanggal berapa jadian kita?",
+                options: ["12 Januari", "14 Februari", "25 Desember", "Aku lupa hehe (JANGAN PILIH INI)"],
+                correct: 1 // Sesuaikan dengan tanggal kalian
+            }
+        ];
+        
+        // --- LOGIC SCRIPT (JANGAN DIUBAH KECUALI PAHAM) ---
+
+        let currentQuestion = 0;
+        let score = 0;
+        const music = document.getElementById('bg-music');
+
+        function startJourney() {
+            music.volume = 0.5;
+            music.play().catch(() => console.log("Butuh interaksi user untuk play music"));
+            changeSection('intro', 'quiz-section');
+            loadQuestion();
+        }
+
+        function loadQuestion() {
+            const q = quizData[currentQuestion];
+            document.getElementById('quiz-question').textContent = q.question;
+            const optionsDiv = document.getElementById('quiz-options');
+            optionsDiv.innerHTML = '';
+
+            q.options.forEach((opt, index) => {
+                const div = document.createElement('div');
+                div.className = 'quiz-option';
+                div.textContent = opt;
+                div.onclick = () => checkAnswer(index, div);
+                optionsDiv.appendChild(div);
+            });
+        }
+
+        function checkAnswer(selectedIndex, element) {
+            const correctIndex = quizData[currentQuestion].correct;
+            
+            if (selectedIndex === correctIndex) {
+                element.classList.add('correct');
+                score++;
+                document.getElementById('score').textContent = score;
+                triggerConfetti(); // HORE!
+
+                setTimeout(() => {
+                    currentQuestion++;
+                    if (currentQuestion < quizData.length) {
+                        loadQuestion();
+                    } else {
+                        finishQuiz();
+                    }
+                }, 1500);
+
+            } else {
+                element.classList.add('wrong');
+                setTimeout(() => {
+                    element.classList.remove('wrong');
+                }, 1000);
+            }
+        }
+
+        function finishQuiz() {
+            changeSection('quiz-section', 'finale');
+            setTimeout(typeWriter, 500);
+        }
+
+        function changeSection(from, to) {
+            document.getElementById(from).classList.remove('active');
+            setTimeout(() => {
+                document.getElementById(to).classList.add('active');
+            }, 100);
+        }
+
+        // Typewriter Effect
+        let i = 0;
+        function typeWriter() {
+            if (i < finalMessage.length) {
+                document.getElementById("typewriter-text").innerHTML += finalMessage.charAt(i);
+                i++;
+                setTimeout(typeWriter, 40);
+            }
+        }
+
+        // Confetti Effect
+        function triggerConfetti() {
+            confetti({
+                particleCount: 100,
+                spread: 70,
+                origin: { y: 0.6 },
+                colors: ['#e63946', '#ffadd7', '#a8e6cf']
+            });
+        }
+
+        // Background Floating Strawberries
+        function createBg() {
+            const container = document.getElementById('bg-strawberries');
+            const items = ['🍓', '🌸', '✨', '💖'];
+            for(let k=0; k<25; k++) {
+                const el = document.createElement('div');
+                el.className = 'floating-item';
+                el.textContent = items[Math.floor(Math.random() * items.length)];
+                el.style.left = Math.random() * 100 + 'vw';
+                el.style.animationDuration = Math.random() * 10 + 10 + 's';
+                el.style.fontSize = Math.random() * 20 + 15 + 'px';
+                container.appendChild(el);
+            }
+        }
+        createBg();
+
+        // WA Button
+        function sendWA() {
+             // GANTI NOMOR WA MU DI SINI
+            const nomor = "6281234567890";
+            const pesan = "Sayang, aku berhasil kumpulin semua strawberrynya! Makasih ya surprisenya, I love you berry much! 🍓❤️";
+            window.open(`https://wa.me/${nomor}?text=${encodeURIComponent(pesan)}`, '_blank');
+        }
+    </script>
+</body>
+</html>
