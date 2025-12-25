@@ -151,7 +151,7 @@
             <h2 id="quiz-question">Pertanyaan...</h2>
             <div id="quiz-options">
                 </div>
-            <p style="margin-top: 20px; font-size: 0.9rem;">Strawberry terkumpul: <span id="score">0</span>/3 🍓</p>
+            <p style="margin-top: 20px; font-size: 0.9rem;">Strawberry terkumpul: <span id="score">0</span>/10 🍓</p>
         </div>
 
         <div id="finale" class="section">
@@ -168,7 +168,7 @@
                 <p id="typewriter-text" style="font-weight: 600; color: var(--straw-red);"></p>
             </div>
             <br>
-            <button class="btn-main" onclick="sendWA()">🍓 Peluk Online 🍓</button>
+            <button class="btn-main" onclick="sendWA()">🍓 Peyuk Online 🍓</button>
         </div>
 
     </div>
@@ -177,25 +177,60 @@
         // --- CUSTOM BAGIAN INI ---
 
         // 1. PESAN SURAT TERAKHIR
-        const finalMessage = "Dear Strawberry-ku yang paling manis. Selamat ulang tahun ya! Makasih udah jadi warna paling cerah di hidupku. Aku bikin game kecil ini biar kamu tau kalau aku inget semua hal kecil tentang kita. Semoga di umur yang baru ini kamu makin bahagia, makin cantik (padahal udah max), dan makin sayang sama aku. I love you berry berry much! ❤️";
+        const finalMessage = "Dear Strawberry-ku yang paling manis. Selamat ulang tahun ya! Makasih udah jadi warna paling cerah di hidup mas. Mas bikin game kecil ini biar ade tau kalau mas inget semua hal kecil tentang kita. Semoga di umur yang baru ini sayang makin bahagia, makin cantik (padahal udah max), dan makin sayang sama mas yeayyy hihihi. I love you berry berry much! ❤️";
         
         // 2. DATA KUIS (Ganti dengan fakta hubungan kalian!)
         // Pastikan 'correct' adalah indeks jawaban yang benar (mulai dari 0, 1, 2, dst.)
         const quizData = [
             {
-                question: "Di mana pertama kali kita ketemu/jadian?",
+                question: "Di mana pertama kali kita ketemu?",
                 options: ["Di Kampus", "Di Cafe Kopi Kenangan", "Di Chat WA", "Di Mimpi"],
-                correct: 1 // Artinya jawaban benar adalah "Di Cafe Kopi Kenangan"
+                correct: 0 // Artinya jawaban benar adalah "Di Cafe Kopi Kenangan"
             },
             {
-                question: "Apa makanan yang paling aku suka kalau lagi badmood?",
-                options: ["Seblak level 10", "Es Krim Strawberry", "Nasi Padang", "Liat foto kamu"],
+                question: "Kapan mas bilang suka ama sayang? hihihi",
+                options: ["Pas itu", "pas abis makrab (sayang nanyain pas itu hihihi)", "pas eek", "pas mammmm"],
+                correct: 1 // Artinya jawaban benar adalah "Liat foto kamu" (Gombal dikit gpp)
+            },
+            {
+                question: "Make baju apa kita pertama ketemu?",
+                options: ["Pink", "biluuu", "kuning", "Lupa hehe (mas juga, keknya make almet)"],
+                correct: 1 // Sesuaikan dengan tanggal kalian
+            },
+            {
+                question: "Apa nama kontak sayang di HP mas?",
+                options: ["Sayang", "My Strawberry 🍓", "Ibu Negara", "Nama Lengkap"],
                 correct: 3 // Artinya jawaban benar adalah "Liat foto kamu" (Gombal dikit gpp)
             },
             {
-                question: "Tanggal berapa jadian kita?",
-                options: ["12 Januari", "14 Februari", "25 Desember", "Aku lupa hehe (JANGAN PILIH INI)"],
-                correct: 1 // Sesuaikan dengan tanggal kalian
+                question: "dulu mas manggil sayang pas awal awal apa yaa hihihi?",
+                options: ["Winda", "Adee", "Sayang", "Cantik"],
+                correct: 0 // Artinya jawaban benar adalah "Liat foto kamu" (Gombal dikit gpp)
+            },
+            {
+                question: "Kenapa mas sayang banget sama adee?",
+                options: ["Karena sayang cantik", "Karena sayang baik", "Karena takdir", "Semua jawaban benar"],
+                correct: 3 // Artinya jawaban benar adalah "Liat foto kamu" (Gombal dikit gpp)
+            },
+            {
+                question: "Nambah umur makin pinter niii hihihi, pukul 19.00 itu jam berapa hayo?",
+                options: ["jam 6 sore", "jam 4 sore", "jam 7 malem", "jam 7 pagi"],
+                correct: 2 // Artinya jawaban benar adalah "Liat foto kamu" (Gombal dikit gpp)
+            },
+            {
+                question: "dulu mas pernah join komunitas sayang tuu, apa hayo?",
+                options: ["Pecinta kucing", "pecinta langit", "Pecinta Bulan", "pecinta langit"],
+                correct: 2 // Artinya jawaban benar adalah "Liat foto kamu" (Gombal dikit gpp)
+            },
+            {
+                question: "Bagian wajah sayang yang mana yang paling sering mas sentuh?",
+                options: ["Hidung", "Bibir", "Pipi", "Kening"],
+                correct: 1 // Artinya jawaban benar adalah "Liat foto kamu" (Gombal dikit gpp)
+            },
+            {
+                question: "Siapa yg lagi laper suka ngambek?",
+                options: ["Adee", "Akuu", "Nyong", "Semua Benar"],
+                correct: 3 // Artinya jawaban benar adalah "Liat foto kamu" (Gombal dikit gpp)
             }
         ];
         
@@ -304,10 +339,11 @@
         // WA Button
         function sendWA() {
              // GANTI NOMOR WA MU DI SINI
-            const nomor = "6281234567890";
+            const nomor = "6285764524514";
             const pesan = "Sayang, aku berhasil kumpulin semua strawberrynya! Makasih ya surprisenya, I love you berry much! 🍓❤️";
             window.open(`https://wa.me/${nomor}?text=${encodeURIComponent(pesan)}`, '_blank');
         }
     </script>
 </body>
 </html>
+
