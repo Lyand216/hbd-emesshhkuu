@@ -46,7 +46,7 @@
             to { transform: translateY(-100vh) rotate(360deg); }
         }
 
-        /* Main Container - Glassmorphism Style */
+        /* Main Container */
         .container {
             background: var(--glass-bg);
             backdrop-filter: blur(10px);
@@ -59,6 +59,8 @@
             text-align: center;
             box-shadow: 0 8px 32px 0 rgba(230, 57, 70, 0.2);
             transition: all 0.5s ease;
+            position: relative;
+            z-index: 10;
         }
 
         h1 {
@@ -80,14 +82,22 @@
             cursor: pointer;
             transition: transform 0.2s, box-shadow 0.2s;
             box-shadow: 0 5px 15px rgba(230, 57, 70, 0.3);
+            margin: 5px; /* Tambah jarak antar tombol */
         }
         .btn-main:hover {
             transform: translateY(-3px);
             box-shadow: 0 8px 20px rgba(230, 57, 70, 0.4);
             background: #d32f2f;
         }
+        
+        .btn-yt {
+            background: #FF0000; /* Warna YouTube */
+        }
+        .btn-yt:hover {
+            background: #cc0000;
+        }
 
-        /* Sections & Transitions */
+        /* Sections */
         .section { display: none; opacity: 0; transition: opacity 0.5s ease; }
         .section.active { display: block; opacity: 1; }
 
@@ -128,6 +138,47 @@
         .photo-frame:nth-child(even) { transform: rotate(3deg); }
         .photo-frame:hover { transform: scale(1.1) rotate(0); z-index: 10;}
 
+        /* VIDEO MODAL (Pop-up Style) */
+        .modal {
+            display: none; 
+            position: fixed; 
+            z-index: 999; 
+            left: 0; top: 0; 
+            width: 100%; height: 100%; 
+            background-color: rgba(0,0,0,0.8); /* Background gelap */
+            justify-content: center; 
+            align-items: center;
+            backdrop-filter: blur(5px);
+        }
+        .modal-content {
+            position: relative;
+            width: 90%;
+            max-width: 700px;
+            background: #000;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 0 20px rgba(255, 255, 255, 0.2);
+        }
+        .video-wrapper {
+            position: relative;
+            padding-bottom: 56.25%; /* 16:9 Aspect Ratio */
+            height: 0;
+        }
+        .video-wrapper iframe {
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            border: none;
+        }
+        .close-btn {
+            position: absolute;
+            top: -40px; right: 0;
+            color: white;
+            font-size: 30px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
     </style>
 </head>
 <body>
@@ -136,6 +187,15 @@
     </audio>
 
     <div class="bg-strawberries" id="bg-strawberries"></div>
+
+    <div id="video-modal" class="modal">
+        <div class="modal-content">
+            <span class="close-btn" onclick="closeVideo()">&times; Tutup</span>
+            <div class="video-wrapper">
+                <iframe id="youtube-frame" src="" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+            </div>
+        </div>
+    </div>
 
     <div class="container">
         
@@ -168,73 +228,38 @@
                 <p id="typewriter-text" style="font-weight: 600; color: var(--straw-red);"></p>
             </div>
             <br>
+            
             <button class="btn-main" onclick="sendWA()">🍓 Peyuk Online 🍓</button>
+            
+            <button class="btn-main btn-yt" onclick="playVideo()">🎬 Tonton Video Spesial</button>
         </div>
 
     </div>
 
     <script>
-        // --- CUSTOM BAGIAN INI ---
+        // --- KONFIGURASI PENTING ---
 
-        // 1. PESAN SURAT TERAKHIR
+        // 1. MASUKKAN ID VIDEO YOUTUBE DI SINI
+        // Contoh link: https://www.youtube.com/watch?v=dQw4w9WgXcQ
+        // ID-nya adalah bagian belakang: "dQw4w9WgXcQ"
+        const youtubeVideoID = "dQw4w9WgXcQ"; // <--- GANTI KODE INI DENGAN ID VIDEOMU
+
         const finalMessage = "Dear Strawberry-ku yang paling manis. Selamat ulang tahun ya! Makasih udah jadi warna paling cerah di hidup mas. Mas bikin game kecil ini biar ade tau kalau mas inget hal-hal kecil tentang kita (walaupun ga semuanya dimasukin kuis si hehehe). Semoga dengan bertambahnya umur ini sayang makin dewasa, makin bahagia, makin cantik (padahal udah max), dan makin sayang sama mas yeayyy hihihi, pokoknya semakin baik dalam segala hal yaah. I love you berry berry much! ❤️";
         
-        // 2. DATA KUIS (Ganti dengan fakta hubungan kalian!)
-        // Pastikan 'correct' adalah indeks jawaban yang benar (mulai dari 0, 1, 2, dst.)
         const quizData = [
-            {
-                question: "Di mana pertama kali kita ketemu?",
-                options: ["Di Kampus", "Di Cafe Kopi Kenangan", "Di Chat WA", "Di Mimpi"],
-                correct: 0 // Artinya jawaban benar adalah "Di Cafe Kopi Kenangan"
-            },
-            {
-                question: "Kapan mas bilang suka ama sayang? hihihi",
-                options: ["Pas itu", "pas abis makrab (sayang nanyain pas itu hihihi)", "pas eek", "pas mammmm"],
-                correct: 1 // Artinya jawaban benar adalah "Liat foto kamu" (Gombal dikit gpp)
-            },
-            {
-                question: "Make baju apa kita pertama ketemu?",
-                options: ["Pink", "biluuu", "kuning", "Lupa hehe (mas juga, keknya make almet)"],
-                correct: 1 // Sesuaikan dengan tanggal kalian
-            },
-            {
-                question: "Apa nama kontak sayang di HP mas?",
-                options: ["Sayang", "My Strawberry 🍓", "Ibu Negara", "Nama Lengkap"],
-                correct: 3 // Artinya jawaban benar adalah "Liat foto kamu" (Gombal dikit gpp)
-            },
-            {
-                question: "dulu mas manggil sayang pas awal awal apa yaa hihihi?",
-                options: ["Winda", "Adee", "Sayang", "Cantik"],
-                correct: 0 // Artinya jawaban benar adalah "Liat foto kamu" (Gombal dikit gpp)
-            },
-            {
-                question: "Kenapa mas sayang banget sama adee?",
-                options: ["Karena sayang cantik", "Karena sayang baik", "Karena takdir", "Semua jawaban benar"],
-                correct: 3 // Artinya jawaban benar adalah "Liat foto kamu" (Gombal dikit gpp)
-            },
-            {
-                question: "Nambah umur makin pinter niii hihihi, pukul 19.00 itu jam berapa hayo?",
-                options: ["jam 6 sore", "jam 4 sore", "jam 7 malem", "jam 7 pagi"],
-                correct: 2 // Artinya jawaban benar adalah "Liat foto kamu" (Gombal dikit gpp)
-            },
-            {
-                question: "dulu mas pernah join komunitas sayang tuu, apa hayo?",
-                options: ["Pecinta kucing", "pecinta langit", "Pecinta Bulan", "pecinta langit"],
-                correct: 2 // Artinya jawaban benar adalah "Liat foto kamu" (Gombal dikit gpp)
-            },
-            {
-                question: "Bagian wajah sayang yang mana yang paling sering mas sentuh?",
-                options: ["Hidung", "Bibir", "Pipi", "Kening"],
-                correct: 1 // Artinya jawaban benar adalah "Liat foto kamu" (Gombal dikit gpp)
-            },
-            {
-                question: "Siapa yg lagi laper suka ngambek?",
-                options: ["Adee", "Akuu", "Nyong", "Semua Benar"],
-                correct: 3 // Artinya jawaban benar adalah "Liat foto kamu" (Gombal dikit gpp)
-            }
+            { question: "Di mana pertama kali kita ketemu?", options: ["Di Kampus", "Di Cafe Kopi Kenangan", "Di Chat WA", "Di Mimpi"], correct: 0 },
+            { question: "Kapan mas bilang suka ama sayang? hihihi", options: ["Pas itu", "pas abis makrab (di telfon hehe)", "pas eek", "pas mammmm"], correct: 1 },
+            { question: "Make baju apa kita pertama ketemu?", options: ["Pink", "biluuu", "kuning", "Lupa hehe (mas juga, keknya make almet)"], correct: 1 },
+            { question: "Apa nama kontak sayang di HP mas?", options: ["Sayang", "My Strawberry 🍓", "Ibu Negara", "Nama Lengkap"], correct: 3 },
+            { question: "dulu mas manggil sayang pas awal awal apa yaa hihihi?", options: ["Winda", "Adee", "Sayang", "Cantik"], correct: 0 },
+            { question: "Kenapa mas sayang banget sama adee?", options: ["Karena sayang cantik", "Karena sayang baik", "Karena takdir", "Semua jawaban benar"], correct: 3 },
+            { question: "Nambah umur makin pinter niii hihihi, pukul 19.00 itu jam berapa hayo?", options: ["jam 6 sore", "jam 4 sore", "jam 7 malem", "jam 7 pagi"], correct: 2 },
+            { question: "dulu mas pernah join komunitas sayang tuu, apa hayo?", options: ["Pecinta kucing", "pecinta langit", "Pecinta Bulan", "pecinta langit"], correct: 2 },
+            { question: "Bagian wajah sayang yang mana yang paling sering mas sentuh?", options: ["Hidung", "Bibir", "Pipi", "Kening"], correct: 1 },
+            { question: "Siapa yg lagi laper suka ngambek?", options: ["Adee", "Akuu", "Nyong", "Semua Benar"], correct: 3 }
         ];
         
-        // --- LOGIC SCRIPT (JANGAN DIUBAH KECUALI PAHAM) ---
+        // --- SYSTEM LOGIC ---
 
         let currentQuestion = 0;
         let score = 0;
@@ -269,7 +294,7 @@
                 element.classList.add('correct');
                 score++;
                 document.getElementById('score').textContent = score;
-                triggerConfetti(); // HORE!
+                triggerConfetti();
 
                 setTimeout(() => {
                     currentQuestion++;
@@ -300,7 +325,6 @@
             }, 100);
         }
 
-        // Typewriter Effect
         let i = 0;
         function typeWriter() {
             if (i < finalMessage.length) {
@@ -310,17 +334,10 @@
             }
         }
 
-        // Confetti Effect
         function triggerConfetti() {
-            confetti({
-                particleCount: 100,
-                spread: 70,
-                origin: { y: 0.6 },
-                colors: ['#e63946', '#ffadd7', '#a8e6cf']
-            });
+            confetti({ particleCount: 100, spread: 70, origin: { y: 0.6 }, colors: ['#e63946', '#ffadd7', '#a8e6cf'] });
         }
 
-        // Background Floating Strawberries
         function createBg() {
             const container = document.getElementById('bg-strawberries');
             const items = ['🍓', '🌸', '✨', '💖'];
@@ -336,16 +353,40 @@
         }
         createBg();
 
-        // WA Button
         function sendWA() {
-             // GANTI NOMOR WA MU DI SINI
             const nomor = "6285764524514";
             const pesan = "Sayang, aku berhasil kumpulin semua strawberrynya! Makasih ya surprisenya, I love you berry much! 🍓❤️";
             window.open(`https://wa.me/${nomor}?text=${encodeURIComponent(pesan)}`, '_blank');
         }
+
+        // --- VIDEO YOUTUBE LOGIC ---
+        
+        function playVideo() {
+            // 1. Matikan musik background biar gak tabrakan
+            music.pause();
+            
+            // 2. Munculkan Modal
+            const modal = document.getElementById('video-modal');
+            modal.style.display = "flex";
+
+            // 3. Set Source Youtube (Autoplay)
+            const iframe = document.getElementById('youtube-frame');
+            iframe.src = `https://www.youtube.com/embed/HPACVwfFpdc?si=a5bmXY_UTP5CiRK0&amp?autoplay=1&rel=0`;
+        }
+
+        function closeVideo() {
+            // 1. Sembunyikan Modal
+            const modal = document.getElementById('video-modal');
+            modal.style.display = "none";
+
+            // 2. Stop Video Youtube (Reset Source)
+            const iframe = document.getElementById('youtube-frame');
+            iframe.src = "";
+
+            // 3. Nyalakan lagi musik background
+            music.play();
+        }
+
     </script>
 </body>
 </html>
-
-
-
