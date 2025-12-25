@@ -2,7 +2,7 @@
 <html lang="id">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>🍓 Happy Birthday My Sweetest! 🍓</title>
     <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700&family=Pacifico&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
@@ -12,7 +12,7 @@
             --straw-pink: #ffadd7;
             --straw-cream: #fffdf7;
             --straw-green: #a8e6cf;
-            --glass-bg: rgba(255, 255, 255, 0.7);
+            --glass-bg: rgba(255, 255, 255, 0.85); /* Sedikit lebih pekat biar teks jelas di HP */
             --glass-border: rgba(255, 255, 255, 0.9);
         }
 
@@ -26,7 +26,7 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            overflow: hidden;
+            overflow: hidden; /* Mencegah scroll body saat modal aktif */
             color: #4a4a4a;
         }
 
@@ -53,21 +53,29 @@
             -webkit-backdrop-filter: blur(10px);
             border-radius: 20px;
             border: 2px solid var(--glass-border);
-            padding: 30px;
-            width: 90%;
+            padding: 25px;
+            width: 85%; /* Lebih lebar di HP */
             max-width: 500px;
             text-align: center;
             box-shadow: 0 8px 32px 0 rgba(230, 57, 70, 0.2);
             transition: all 0.5s ease;
             position: relative;
             z-index: 10;
+            max-height: 90vh; /* Agar tidak kepotong di layar pendek */
+            overflow-y: auto; /* Scroll jika konten kepanjangan */
         }
 
         h1 {
             font-family: 'Pacifico', cursive;
             color: var(--straw-red);
-            font-size: 2.5rem;
+            font-size: 2rem; /* Ukuran font disesuaikan */
             margin-bottom: 10px;
+            line-height: 1.2;
+        }
+
+        p {
+            font-size: 1rem;
+            line-height: 1.5;
         }
 
         /* Buttons */
@@ -75,26 +83,24 @@
             background: var(--straw-red);
             color: white;
             border: none;
-            padding: 12px 30px;
+            padding: 12px 25px;
             border-radius: 50px;
-            font-size: 1.1rem;
+            font-size: 1rem;
             font-weight: bold;
             cursor: pointer;
             transition: transform 0.2s, box-shadow 0.2s;
             box-shadow: 0 5px 15px rgba(230, 57, 70, 0.3);
-            margin: 5px; /* Tambah jarak antar tombol */
+            margin: 8px 5px;
+            width: 100%; /* Tombol full width di HP biar gampang dipencet */
+            max-width: 250px;
+            display: inline-block;
         }
-        .btn-main:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 8px 20px rgba(230, 57, 70, 0.4);
-            background: #d32f2f;
+        .btn-main:active {
+            transform: scale(0.95);
         }
         
         .btn-yt {
-            background: #FF0000; /* Warna YouTube */
-        }
-        .btn-yt:hover {
-            background: #cc0000;
+            background: #FF0000;
         }
 
         /* Sections */
@@ -104,17 +110,19 @@
         /* Quiz Styling */
         .quiz-option {
             background: white;
-            margin: 10px 0;
-            padding: 15px;
+            margin: 8px 0;
+            padding: 12px;
             border-radius: 10px;
             cursor: pointer;
             border: 2px solid transparent;
-            transition: all 0.3s;
+            transition: all 0.2s;
             font-weight: bold;
+            font-size: 0.95rem;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
         }
-        .quiz-option:hover {
-            border-color: var(--straw-pink);
+        .quiz-option:active {
             background: var(--straw-cream);
+            transform: scale(0.98);
         }
         .quiz-option.correct { background: var(--straw-green); color: #006400; }
         .quiz-option.wrong { background: var(--straw-red); color: white; animation: shake 0.5s; }
@@ -126,57 +134,90 @@
         }
 
         /* Gallery */
-        .gallery { display: flex; gap: 10px; justify-content: center; margin-top: 20px; flex-wrap: wrap;}
+        .gallery { display: flex; gap: 8px; justify-content: center; margin-top: 15px; flex-wrap: wrap;}
         .photo-frame {
-            width: 100px; height: 100px;
+            width: 80px; height: 80px; /* Diperkecil dikit biar muat di HP */
             border-radius: 10px;
-            border: 4px solid var(--straw-red);
+            border: 3px solid var(--straw-red);
             background-size: cover; background-position: center;
             transform: rotate(-3deg);
             transition: transform 0.3s;
         }
         .photo-frame:nth-child(even) { transform: rotate(3deg); }
-        .photo-frame:hover { transform: scale(1.1) rotate(0); z-index: 10;}
 
-        /* VIDEO MODAL (Pop-up Style) */
+        /* --- VIDEO MODAL FIX (RESPONSIVE) --- */
         .modal {
             display: none; 
             position: fixed; 
-            z-index: 999; 
+            z-index: 9999; /* Z-index tinggi */
             left: 0; top: 0; 
             width: 100%; height: 100%; 
-            background-color: rgba(0,0,0,0.8); /* Background gelap */
+            background-color: rgba(0,0,0,0.85); 
             justify-content: center; 
             align-items: center;
             backdrop-filter: blur(5px);
+            padding: 20px; /* Jarak aman dari pinggir layar */
+            box-sizing: border-box;
         }
+        
         .modal-content {
             position: relative;
-            width: 90%;
-            max-width: 700px;
+            width: 100%;
+            max-width: 600px;
             background: #000;
             border-radius: 15px;
             overflow: hidden;
             box-shadow: 0 0 20px rgba(255, 255, 255, 0.2);
+            animation: zoomIn 0.3s ease;
         }
+
+        @keyframes zoomIn {
+            from {transform: scale(0.8); opacity: 0;}
+            to {transform: scale(1); opacity: 1;}
+        }
+
         .video-wrapper {
             position: relative;
             padding-bottom: 56.25%; /* 16:9 Aspect Ratio */
             height: 0;
+            background: #000;
         }
+        
         .video-wrapper iframe {
             position: absolute;
             top: 0; left: 0;
             width: 100%; height: 100%;
             border: none;
         }
+
+        /* TOMBOL CLOSE DIPINDAH KE DALAM AGAR AMAN DI HP */
         .close-btn {
             position: absolute;
-            top: -40px; right: 0;
+            top: 10px; 
+            right: 15px;
             color: white;
-            font-size: 30px;
+            font-size: 24px;
             cursor: pointer;
             font-weight: bold;
+            background: rgba(0,0,0,0.5);
+            width: 35px; height: 35px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 10000;
+            border: 2px solid white;
+        }
+        .close-btn:hover {
+            background: red;
+        }
+
+        /* RESPONSIVE MEDIA QUERIES */
+        @media (max-width: 480px) {
+            h1 { font-size: 1.8rem; }
+            .container { padding: 20px; width: 90%; }
+            .photo-frame { width: 70px; height: 70px; }
+            .btn-main { width: 100%; margin: 5px 0; }
         }
 
     </style>
@@ -188,9 +229,8 @@
 
     <div class="bg-strawberries" id="bg-strawberries"></div>
 
-    <div id="video-modal" class="modal">
-        <div class="modal-content">
-            <span class="close-btn" onclick="closeVideo()">&times; Tutup</span>
+    <div id="video-modal" class="modal" onclick="closeVideo(event)">
+        <div class="modal-content" onclick="event.stopPropagation()"> <div class="close-btn" onclick="closeVideo(event)">&times;</div>
             <div class="video-wrapper">
                 <iframe id="youtube-frame" src="" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
             </div>
@@ -224,25 +264,23 @@
                 <div class="photo-frame" style="background-image: url(foto1.jpeg);"></div>
             </div>
 
-            <div style="margin-top: 30px; text-align: left; max-height: 200px; overflow-y: auto;">
-                <p id="typewriter-text" style="font-weight: 600; color: var(--straw-red);"></p>
+            <div style="margin-top: 20px; text-align: left; max-height: 150px; overflow-y: auto; padding-right: 5px;">
+                <p id="typewriter-text" style="font-weight: 600; color: var(--straw-red); font-size: 0.95rem;"></p>
             </div>
             <br>
             
             <button class="btn-main" onclick="sendWA()">🍓 Peyuk Online 🍓</button>
-            
             <button class="btn-main btn-yt" onclick="playVideo()">🎬 Tonton Video Spesial</button>
         </div>
 
     </div>
 
     <script>
-        // --- KONFIGURASI PENTING ---
+        // --- KONFIGURASI ---
 
-        // 1. MASUKKAN ID VIDEO YOUTUBE DI SINI
-        // Contoh link: https://www.youtube.com/watch?v=dQw4w9WgXcQ
-        // ID-nya adalah bagian belakang: "dQw4w9WgXcQ"
-        // const youtubeVideoID = "dQw4w9WgXcQ"; // <--- GANTI KODE INI DENGAN ID VIDEOMU
+        // Masukkan ID Video Youtube yang BENAR di sini (bukan link full, ID-nya saja)
+        // Dari link yg kamu kirim: https://www.youtube.com/embed/HPACVwfFpdc -> ID nya adalah HPACVwfFpdc
+        const youtubeVideoID = "HPACVwfFpdc"; 
 
         const finalMessage = "Dear Strawberry-ku yang paling manis. Selamat ulang tahun ya! Makasih udah jadi warna paling cerah di hidup mas. Mas bikin game kecil ini biar ade tau kalau mas inget hal-hal kecil tentang kita (walaupun ga semuanya dimasukin kuis si hehehe). Semoga dengan bertambahnya umur ini sayang makin dewasa, makin bahagia, makin cantik (padahal udah max), dan makin sayang sama mas yeayyy hihihi, pokoknya semakin baik dalam segala hal yaah. I love you berry berry much! ❤️";
         
@@ -259,7 +297,7 @@
             { question: "Siapa yg lagi laper suka ngambek?", options: ["Adee", "Akuu", "Nyong", "Semua Benar"], correct: 3 }
         ];
         
-        // --- SYSTEM LOGIC ---
+        // --- LOGIC ---
 
         let currentQuestion = 0;
         let score = 0;
@@ -355,39 +393,41 @@
 
         function sendWA() {
             const nomor = "6285764524514";
-            const pesan = "Sayang, ade berhasil kumpulin semua strawberrynya! Makasih ya surprisenya, I love you berry much! 🍓❤️";
+            const pesan = "Sayang, aku berhasil kumpulin semua strawberrynya! Makasih ya surprisenya, I love you berry much! 🍓❤️";
             window.open(`https://wa.me/${nomor}?text=${encodeURIComponent(pesan)}`, '_blank');
         }
 
-        // --- VIDEO YOUTUBE LOGIC ---
+        // --- VIDEO YOUTUBE LOGIC (REVISI) ---
         
         function playVideo() {
-            // 1. Matikan musik background biar gak tabrakan
             music.pause();
-            
-            // 2. Munculkan Modal
             const modal = document.getElementById('video-modal');
             modal.style.display = "flex";
 
-            // 3. Set Source Youtube (Autoplay)
             const iframe = document.getElementById('youtube-frame');
-            iframe.src = `https://www.youtube.com/embed/HPACVwfFpdc?si=a5bmXY_UTP5CiRK0&amp?autoplay=1&rel=0`;
+            // Menggunakan variabel youtubeVideoID biar rapi & fix URL syntax
+            iframe.src = `https://www.youtube.com/embed/${youtubeVideoID}?autoplay=1&rel=0&playsinline=1`;
         }
 
-        function closeVideo() {
-            // 1. Sembunyikan Modal
+        function closeVideo(event) {
+            // Cek jika event ada (biar fungsi bisa dipanggil manual tanpa event)
+            if (event) {
+                // Jangan tutup kalau yang diklik adalah area videonya (div.modal-content)
+                // Kita mau tutup CUMA kalau klik tombol X atau Background Hitam
+                if (event.target.closest('.modal-content') && !event.target.classList.contains('close-btn')) {
+                    return;
+                }
+            }
+
             const modal = document.getElementById('video-modal');
             modal.style.display = "none";
 
-            // 2. Stop Video Youtube (Reset Source)
             const iframe = document.getElementById('youtube-frame');
-            iframe.src = "";
+            iframe.src = ""; // Reset source untuk mematikan video
 
-            // 3. Nyalakan lagi musik background
             music.play();
         }
 
     </script>
 </body>
 </html>
-
